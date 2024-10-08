@@ -1,19 +1,22 @@
+require('dotenv').config();
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const bodyparser = require("body-parser");
 const path = require('path');
+const cors = require('cors');
 
 const connectDB = require('./server/database/connection');
 
 const app = express();
-
-dotenv.config( { path : 'config.env'} )
+app.use(cors());
 const PORT = process.env.PORT || 8080
-
+app.use(express.static(path.join(__dirname, 'public')));
 // log requests
 app.use(morgan('tiny'));
-
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+//   });
 // mongodb connection
 connectDB();
 
@@ -22,7 +25,7 @@ app.use(bodyparser.urlencoded({ extended : true}))
 
 // set view engine
 app.set("view engine", "ejs")
-//app.set("views", path.resolve(__dirname, "views/ejs"))
+app.set("views", path.resolve(__dirname, "views"))
 
 // load assets
 app.use('/css', express.static(path.resolve(__dirname, "assets/css")))
